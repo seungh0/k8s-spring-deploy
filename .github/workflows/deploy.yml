@@ -29,5 +29,5 @@ jobs:
           DOCKER_REGISTRY: ghcr.io/seungh0
           DOCKER_REPOSITORY: k8s-spring-test
         run: |
-          docker build -t $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
+          docker build -t $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest .
           docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
