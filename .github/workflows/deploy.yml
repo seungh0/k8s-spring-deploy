@@ -1,0 +1,33 @@
+name: Deploy Dev Server
+
+on:
+  push:
+    branches:
+      - master
+      - feature/cicd-k8s
+env:
+  PROJECT_NAME: month-app
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout@v2
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GIT_TOKEN }}
+
+      - name: Build, tag, and push image to ghcr.io
+        env:
+          ghcr:
+          DOCKER_REGISTRY: ghcr.io/seungh0
+          DOCKER_REPOSITORY: k8s-spring-test
+        run: |
+          docker build -t $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
