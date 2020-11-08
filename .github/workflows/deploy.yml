@@ -1,3 +1,5 @@
+Name: k8s-spring-deploy
+
 on:
   push:
     branches:
