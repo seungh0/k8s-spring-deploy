@@ -25,9 +25,19 @@ jobs:
 
       - name: Build, tag, and push image to ghcr.io
         env:
-          ghcr:
-          DOCKER_REGISTRY: ghcr.io/seungh0
-          DOCKER_REPOSITORY: k8s-spring-test
+          REGISTRY_NAME: ghcr.io/seungh0
+          REPOSITORY_NAME: k8s-spring-test
         run: |
-          docker build -t $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest .
-          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
+          docker build -t $REGISTRY_NAME/$ REPOSITORY_NAME:latest .
+          docker push $REGISTRY_NAME/$ REPOSITORY_NAME:latest
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: [k8s-spring]
+    steps:
+      - name: run server
+        env:
+          REGISTRY_NAME: ghcr.io/seungh0
+          REPOSITORY_NAME: k8s-spring-test
+        run: |
+        kubectl set image deployment/spring-app-deployment spring-app=$REGISTRY_NAME/$REPOSITORY_NAME:latest
