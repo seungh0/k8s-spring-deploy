@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: sample-app
-          image: seungh0/k8s-spring:latest
+          image: ghcr.io/seungh0/k8s-spring-test:latest
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
