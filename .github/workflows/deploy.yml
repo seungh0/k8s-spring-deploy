@@ -1,13 +1,8 @@
-name: Deploy Dev Server
-
 on:
   push:
     branches:
       - master
       - feature/cicd-k8s
-env:
-  PROJECT_NAME: month-app
-
 jobs:
   build:
     name: Build
@@ -28,8 +23,8 @@ jobs:
           REGISTRY_NAME: ghcr.io/seungh0
           REPOSITORY_NAME: k8s-spring-test
         run: |
-          docker build -t $REGISTRY_NAME/$ REPOSITORY_NAME:latest .
-          docker push $REGISTRY_NAME/$ REPOSITORY_NAME:latest
+          docker build -t $REGISTRY_NAME/$REPOSITORY_NAME:latest .
+          docker push $REGISTRY_NAME/$REPOSITORY_NAME:latest
 #  deploy:
 #    name: Deploy
 #    needs:
