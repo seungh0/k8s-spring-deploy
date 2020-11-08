@@ -32,8 +32,9 @@ jobs:
           docker push $REGISTRY_NAME/$ REPOSITORY_NAME:latest
   deploy:
     name: Deploy
-    needs: build
-    runs-on: [k8s-spring]
+    needs:
+      - build
+    runs-on: k8s-spring
     steps:
       - name: run server
         env:
