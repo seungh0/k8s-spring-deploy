@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: container-selective-env-example
+spec:
+  containers:
+    - name: my-container
+      image: busybox
+      args: ['tail', '-f', '/dev/null']
+      env:
+        - name: ENV_KEYNAME_1
+          valueFrom:
+            configMapKeyRef:
+              name: log-level-configmap
+              key: LOG_LEVEL
