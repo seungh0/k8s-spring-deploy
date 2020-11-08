@@ -31,9 +31,9 @@ jobs:
           docker push $REGISTRY_NAME/$REPOSITORY_NAME:$IMAGE_TAG
           docker push $REGISTRY_NAME/$REPOSITORY_NAME:latest
 
-          echo -e "IMAGE=$DOCKER_REGISTRY/$DOCKER_REPOSITORY\nTAG=$IMAGE_TAG" > ./version.txt
+          echo -e "$IMAGE_TAG" > ./version.txt
 
-      - name: Upload deploy.zip
+      - name: Upload version.txt
         uses: actions/upload-artifact@v2
         with:
           name: version.txt
@@ -45,7 +45,7 @@ jobs:
       - build
     runs-on: k8s-spring
     steps:
-      - name: Download deploy.zip
+      - name: Download version.txt
         uses: actions/download-artifact@v2
         with:
           name: version.txt
