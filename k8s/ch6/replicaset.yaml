@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: replicaset-spring-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: spring-app-pod-label
+  template:
+    metadata:
+      name: spring-app-pod
+      labels:
+        app: spring-app-pod-label
+    spec:
+      containers:
+        - name: spring-app
+          image: ghcr.io/seungh0/k8s-spring-test
+          ports:
+            - containerPort: 8080
