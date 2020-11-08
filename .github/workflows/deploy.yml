@@ -24,9 +24,20 @@ jobs:
         env:
           REGISTRY_NAME: ghcr.io/seungh0
           REPOSITORY_NAME: k8s-spring-test
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $REGISTRY_NAME/$REPOSITORY_NAME:latest .
+          docker build -t $REGISTRY_NAME/$REPOSITORY_NAME:$IMAGE_TAG .
+          docker tag $REGISTRY_NAME/$REPOSITORY_NAME:$IMAGE_TAG $REGISTRY_NAME/$REPOSITORY_NAME:latest
+          docker push $REGISTRY_NAME/$REPOSITORY_NAME:$IMAGE_TAG
           docker push $REGISTRY_NAME/$REPOSITORY_NAME:latest
+
+          echo -e "IMAGE=$DOCKER_REGISTRY/$DOCKER_REPOSITORY\nTAG=$IMAGE_TAG" > ./version.txt
+
+      - name: Upload deploy.zip
+        uses: actions/upload-artifact@v2
+        with:
+          name: version.txt
+          path: version.txt
 
   deploy:
     name: Deploy
@@ -34,9 +45,15 @@ jobs:
       - build
     runs-on: k8s-spring
     steps:
-      - name: run server
+      - name: Download deploy.zip
+        uses: actions/download-artifact@v2
+        with:
+          name: version.txt
+
+      - name: Run server
         env:
           REGISTRY_NAME: ghcr.io/seungh0
           REPOSITORY_NAME: k8s-spring-test
         run: |
-          kubectl set image deployment/spring-app-deployment spring-app=$REGISTRY_NAME/$REPOSITORY_NAME:latest
+          VERSION=`cat ./version.txt`
+          kubectl set image deployment/spring-app-deployment spring-app=$REGISTRY_NAME/$REPOSITORY_NAME:$VERSION
