@@ -1,0 +1,59 @@
+name: k8s-spring-deploy
+
+on:
+  push:
+    branches:
+      - master
+      - feature/cicd-k8s
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout@v2
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GIT_TOKEN }}
+
+      - name: Build, tag, and push image to ghcr.io
+        env:
+          REGISTRY_NAME: ghcr.io/seungh0
+          REPOSITORY_NAME: k8s-spring-test
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY_NAME/$REPOSITORY_NAME:$IMAGE_TAG .
+          docker tag $REGISTRY_NAME/$REPOSITORY_NAME:$IMAGE_TAG $REGISTRY_NAME/$REPOSITORY_NAME:latest
+          docker push $REGISTRY_NAME/$REPOSITORY_NAME:$IMAGE_TAG
+          docker push $REGISTRY_NAME/$REPOSITORY_NAME:latest
+
+          echo -e "$IMAGE_TAG" > ./version.txt
+
+      - name: Upload version.txt
+        uses: actions/upload-artifact@v2
+        with:
+          name: version.txt
+          path: version.txt
+
+  deploy:
+    name: Deploy
+    needs:
+      - build
+    runs-on: k8s-spring
+    steps:
+      - name: Download version.txt
+        uses: actions/download-artifact@v2
+        with:
+          name: version.txt
+
+      - name: Run server
+        env:
+          REGISTRY_NAME: ghcr.io/seungh0
+          REPOSITORY_NAME: k8s-spring-test
+        run: |
+          VERSION=`cat ./version.txt`
+          kubectl set image deployment/spring-app-deployment spring-app=$REGISTRY_NAME/$REPOSITORY_NAME:$VERSION

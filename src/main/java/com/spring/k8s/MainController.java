@@ -11,4 +11,9 @@ public class MainController {
 		return "pong";
 	}
 
+	@GetMapping("/ping1")
+	public String ping1() {
+		return "pong1";
+	}
+
 }
