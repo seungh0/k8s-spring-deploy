@@ -1,4 +1,4 @@
-Name: k8s-spring-deploy
+name: k8s-spring-deploy
 
 on:
   push:
