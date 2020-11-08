@@ -27,6 +27,7 @@ jobs:
         run: |
           docker build -t $REGISTRY_NAME/$REPOSITORY_NAME:latest .
           docker push $REGISTRY_NAME/$REPOSITORY_NAME:latest
+
   deploy:
     name: Deploy
     needs:
