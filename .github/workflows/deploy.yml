@@ -56,4 +56,4 @@ jobs:
           REPOSITORY_NAME: k8s-spring-test
         run: |
           VERSION=`cat ./version.txt`
-          kubectl set image deployment/spring-app-deployment spring-app=$REGISTRY_NAME/$REPOSITORY_NAME:$VERSION --record
+          kubectl set image deployment/spring-app-deployment -n spring-k8s spring-app=$REGISTRY_NAME/$REPOSITORY_NAME:$VERSION --record
